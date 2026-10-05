@@ -1,0 +1,656 @@
+
+====================================================================================================
+STEP 0: RAW FILE INTEGRITY (SHA-256 against verified values)
+====================================================================================================
+   table         file                                                           sha256  matches_verified
+ account  account.asc 58d7f50abd72e9b1a5568346f74bb54cd71224ee1db9f09a27d7cac563f38cc6              True
+    card     card.asc fc669bde6adf6457d87421c0bfb218e9c384a7032c6accd348d207a405e72109              True
+  client   client.asc e435c6b92d246f4f0dfd5e2827469d745c06238714c32b3ffb415eebe794e1a7              True
+    disp     disp.asc ebd801f77b6d322e8ebc08e52f188e7c8fca539325f85f57f8c73434da9d32d8              True
+district district.asc 7f03cf3b9b82f0fdcc3abdf6cc716f145db8e9875c68e2d2e2f7151e9ecf4df3              True
+    loan     loan.asc 68535f609a254aa7a3f03dd8e27dcb822b532df12a0d6046f0666b8dc0b8ae8e              True
+   order    order.asc 035930fa6acd2ca42a935e654b21e1bb260248f49b6dc6e7de6351b7c4d56d02              True
+   trans    trans.asc 75ab2f39df9d79d79c5c900de90ddd28248b689f214598ac9fa2ff0f574a70d2              True
+
+====================================================================================================
+STEP 1: STRICT TYPED IMPORT
+====================================================================================================
+token encodings preserved (unquoted-empty vs "" vs " "):
+{
+  "order.k_symbol": {
+    "explicit blank (\" \")": 1379
+  },
+  "trans.operation": {
+    "explicit empty (\"\")": 183114
+  },
+  "trans.k_symbol": {
+    "missing (unquoted empty)": 10,
+    "explicit empty (\"\")": 481871,
+    "explicit blank (\" \")": 53433
+  },
+  "trans.bank": {
+    "missing (unquoted empty)": 760931,
+    "explicit empty (\"\")": 21881
+  },
+  "trans.account": {
+    "missing (unquoted empty)": 760931
+  }
+}
+numeric placeholders converted to missing:
+{
+  "district.A12": {
+    "placeholder/empty -> missing": 1
+  },
+  "district.A15": {
+    "placeholder/empty -> missing": 1
+  }
+}
+privacy: columns dropped at ingestion (aggregate facts only):
+{
+  "client.birth_number": {
+    "rows": 5369,
+    "six_digit_format_rows": 5369,
+    "reason": "contains birth date and sex of a person; not needed for Verity"
+  }
+}
+
+====================================================================================================
+STEP 2: DATA SNAPSHOT (every table)
+====================================================================================================
+
+====================================================================================================
+TABLE: account
+====================================================================================================
+rows: 4,500 | columns: 4 | memory: 0.12 MB
+duplicate rows: 0 | primary key account_id: unique=True nulls=0
+
+-- schema --
+     column          dtype  missing  unique                          example
+ account_id          Int64        0    4500                              576
+district_id          Int64        0      77                               55
+  frequency       category        0       3               'POPLATEK MESICNE'
+       date datetime64[us]        0    1535 Timestamp('1993-01-01 00:00:00')
+
+-- first 5 --
+   account_id  district_id         frequency       date
+0         576           55  POPLATEK MESICNE 1993-01-01
+1        3818           74  POPLATEK MESICNE 1993-01-01
+2         704           55  POPLATEK MESICNE 1993-01-01
+3        2378           16  POPLATEK MESICNE 1993-01-01
+4        2632           24  POPLATEK MESICNE 1993-01-02
+
+-- last 5 --
+      account_id  district_id         frequency       date
+4495         124           55  POPLATEK MESICNE 1997-12-28
+4496        3958           59  POPLATEK MESICNE 1997-12-28
+4497         777           30  POPLATEK MESICNE 1997-12-28
+4498        1573           63  POPLATEK MESICNE 1997-12-29
+4499        3276            1  POPLATEK MESICNE 1997-12-29
+
+-- random 5 (seed 42) --
+      account_id  district_id         frequency       date
+2323        2243           25  POPLATEK MESICNE 1996-01-24
+3686        1616           22  POPLATEK MESICNE 1997-02-07
+2974        3543           74  POPLATEK MESICNE 1996-07-21
+2992        2717           74  POPLATEK MESICNE 1996-07-25
+468          327           54  POPLATEK MESICNE 1993-06-02
+
+-- date range date: 1993-01-01 00:00:00 .. 1997-12-29 00:00:00
+
+-- frequency: frequency (3 values incl. missing/blank) --
+frequency
+POPLATEK MESICNE      4167
+POPLATEK TYDNE         240
+POPLATEK PO OBRATU      93
+
+====================================================================================================
+TABLE: card
+====================================================================================================
+rows: 892 | columns: 4 | memory: 0.02 MB
+duplicate rows: 0 | primary key card_id: unique=True nulls=0
+
+-- schema --
+ column          dtype  missing  unique                          example
+card_id          Int64        0     892                             1005
+disp_id          Int64        0     892                             9285
+   type       category        0       3                        'classic'
+ issued datetime64[us]        0     607 Timestamp('1993-11-07 00:00:00')
+
+-- first 5 --
+   card_id  disp_id     type     issued
+0     1005     9285  classic 1993-11-07
+1      104      588  classic 1994-01-19
+2      747     4915  classic 1994-02-05
+3       70      439  classic 1994-02-08
+4      577     3687  classic 1994-02-15
+
+-- last 5 --
+     card_id  disp_id     type     issued
+887      125      694     gold 1998-12-26
+888      674     4360  classic 1998-12-28
+889      322     2063  classic 1998-12-28
+890      685     4467  classic 1998-12-29
+891      635     4083  classic 1998-12-29
+
+-- random 5 (seed 42) --
+     card_id  disp_id     type     issued
+710      752     4944   junior 1998-09-06
+440      154      887  classic 1997-12-28
+525      444     2815     gold 1998-04-03
+721      653     4212  classic 1998-09-16
+39       223     1353  classic 1995-04-18
+
+-- date range issued: 1993-11-07 00:00:00 .. 1998-12-29 00:00:00
+
+-- frequency: type (3 values incl. missing/blank) --
+type
+classic    659
+junior     145
+gold        88
+
+====================================================================================================
+TABLE: client
+====================================================================================================
+rows: 5,369 | columns: 2 | memory: 0.10 MB
+duplicate rows: 0 | primary key client_id: unique=True nulls=0
+privacy: column(s) ['birth_number'] removed at ingestion and not shown
+
+-- schema --
+     column dtype  missing  unique example
+  client_id Int64        0    5369       1
+district_id Int64        0      77      18
+
+-- first 5 --
+   client_id  district_id
+0          1           18
+1          2            1
+2          3            1
+3          4            5
+4          5            5
+
+-- last 5 --
+      client_id  district_id
+5364      13955            1
+5365      13956            1
+5366      13968           61
+5367      13971           67
+5368      13998           74
+
+-- random 5 (seed 42) --
+      client_id  district_id
+410         431           24
+3625       3831           11
+838         885           34
+4080       4311           59
+4572       4861           57
+
+====================================================================================================
+TABLE: disp
+====================================================================================================
+rows: 5,369 | columns: 4 | memory: 0.15 MB
+duplicate rows: 0 | primary key disp_id: unique=True nulls=0
+
+-- schema --
+    column    dtype  missing  unique example
+   disp_id    Int64        0    5369       1
+ client_id    Int64        0    5369       1
+account_id    Int64        0    4500       1
+      type category        0       2 'OWNER'
+
+-- first 5 --
+   disp_id  client_id  account_id       type
+0        1          1           1      OWNER
+1        2          2           2      OWNER
+2        3          3           2  DISPONENT
+3        4          4           3      OWNER
+4        5          5           3  DISPONENT
+
+-- last 5 --
+      disp_id  client_id  account_id       type
+5364    13647      13955       11349      OWNER
+5365    13648      13956       11349  DISPONENT
+5366    13660      13968       11359      OWNER
+5367    13663      13971       11362      OWNER
+5368    13690      13998       11382      OWNER
+
+-- random 5 (seed 42) --
+      disp_id  client_id  account_id   type
+410       431        431         353  OWNER
+3625     3831       3831        3168  OWNER
+838       885        885         737  OWNER
+4080     4311       4311        3573  OWNER
+4572     4861       4861        4033  OWNER
+
+-- frequency: type (2 values incl. missing/blank) --
+type
+OWNER        4500
+DISPONENT     869
+
+====================================================================================================
+TABLE: district
+====================================================================================================
+rows: 77 | columns: 16 | memory: 0.01 MB
+duplicate rows: 0 | primary key district_id: unique=True nulls=0
+
+-- schema --
+                    column    dtype  missing  unique       example
+               district_id    Int64        0      77             1
+             district_name      str        0      77 'Hl.m. Praha'
+                    region category        0       8      'Prague'
+             n_inhabitants    Int64        0      77       1204953
+   n_municipalities_lt_499    Int64        0      53             0
+ n_municipalities_500_1999    Int64        0      36             0
+n_municipalities_2000_9999    Int64        0      17             0
+ n_municipalities_gt_10000    Int64        0       6             1
+                  n_cities    Int64        0      11             1
+   urban_inhabitants_ratio  Float64        0      70         100.0
+            average_salary    Int64        0      76         12541
+    unemployment_rate_1995  Float64        1      70          0.29
+    unemployment_rate_1996  Float64        0      73          0.43
+    entrepreneurs_per_1000    Int64        0      44           167
+               crimes_1995    Int64        1      75         85677
+               crimes_1996    Int64        0      76         99107
+
+-- first 5 --
+   district_id district_name           region  n_inhabitants  n_municipalities_lt_499  n_municipalities_500_1999  n_municipalities_2000_9999  n_municipalities_gt_10000  n_cities  urban_inhabitants_ratio  average_salary  unemployment_rate_1995  unemployment_rate_1996  entrepreneurs_per_1000  crimes_1995  crimes_1996
+0            1   Hl.m. Praha           Prague        1204953                        0                          0                           0                          1         1                    100.0           12541                    0.29                    0.43                     167        85677        99107
+1            2       Benesov  central Bohemia          88884                       80                         26                           6                          2         5                     46.7            8507                    1.67                    1.85                     132         2159         2674
+2            3        Beroun  central Bohemia          75232                       55                         26                           4                          1         5                     41.7            8980                    1.95                    2.21                     111         2824         2813
+3            4        Kladno  central Bohemia         149893                       63                         29                           6                          2         6                     67.4            9753                    4.64                    5.05                     109         5244         5892
+4            5         Kolin  central Bohemia          95616                       65                         30                           4                          1         6                     51.4            9307                    3.85                    4.43                     118         2616         3040
+
+-- last 5 --
+    district_id    district_name         region  n_inhabitants  n_municipalities_lt_499  n_municipalities_500_1999  n_municipalities_2000_9999  n_municipalities_gt_10000  n_cities  urban_inhabitants_ratio  average_salary  unemployment_rate_1995  unemployment_rate_1996  entrepreneurs_per_1000  crimes_1995  crimes_1996
+72           73            Opava  north Moravia         182027                       17                         49                          12                          2         7                     56.4            8746                    3.33                    3.74                      90         4355         4433
+73           74  Ostrava - mesto  north Moravia         323870                        0                          0                           0                          1         1                    100.0           10673                    4.75                    5.44                     100        18782        18347
+74           75           Prerov  north Moravia         138032                       67                         30                           4                          2         5                     64.6            8819                    5.38                    5.66                      99         4063         4505
+75           76          Sumperk  north Moravia         127369                       31                         32                          13                          2         7                     51.2            8369                    4.73                    5.88                     107         3736         2807
+76           77           Vsetin  north Moravia         148545                        8                         35                          12                          3         4                     53.5            8909                    4.01                    5.56                     113         3460         3590
+
+-- random 5 (seed 42) --
+    district_id  district_name           region  n_inhabitants  n_municipalities_lt_499  n_municipalities_500_1999  n_municipalities_2000_9999  n_municipalities_gt_10000  n_cities  urban_inhabitants_ratio  average_salary  unemployment_rate_1995  unemployment_rate_1996  entrepreneurs_per_1000  crimes_1995  crimes_1996
+4             5          Kolin  central Bohemia          95616                       65                         30                           4                          1         6                     51.4            9307                    3.85                    4.43                     118         2616         3040
+35           36        Liberec    north Bohemia         159617                       29                         19                           8                          1         9                     85.2            9198                    3.33                    4.28                     131         5796         6132
+10           11  Praha - zapad  central Bohemia          75637                       35                         36                           9                          0         7                     36.5            9622                    0.45                    0.59                     154         3475         3529
+0             1    Hl.m. Praha           Prague        1204953                        0                          0                           0                          1         1                    100.0           12541                    0.29                    0.43                     167        85677        99107
+45           46         Nachod     east Bohemia         112709                       48                         20                           7                          3        10                     73.5            8369                    1.79                    2.31                     117         2854         2618
+
+-- numeric statistics (identifiers excluded) --
+                                 min         max        mean      median         std
+n_inhabitants               42821.00  1204953.00  133884.896  108871.000  136913.465
+n_municipalities_lt_499         0.00      151.00      48.623      49.000      32.742
+n_municipalities_500_1999       0.00       70.00      24.325      25.000      12.781
+n_municipalities_2000_9999      0.00       20.00       6.273       6.000       4.015
+n_municipalities_gt_10000       0.00        5.00       1.727       2.000       1.008
+n_cities                        1.00       11.00       6.260       6.000       2.435
+urban_inhabitants_ratio        33.90      100.00      63.035      59.800      16.222
+average_salary               8110.00    12541.00    9031.675    8814.000     790.202
+unemployment_rate_1995          0.29        7.34       3.119       2.825       1.666
+unemployment_rate_1996          0.43        9.40       3.787       3.600       1.908
+entrepreneurs_per_1000         81.00      167.00     116.130     113.000      16.609
+crimes_1995                   818.00    85677.00    4850.316    2932.000    9888.952
+crimes_1996                   888.00    99107.00    5030.831    3040.000   11270.797
+
+-- frequency: region (8 values incl. missing/blank) --
+region
+south Moravia      14
+central Bohemia    12
+east Bohemia       11
+north Moravia      11
+west Bohemia       10
+north Bohemia      10
+south Bohemia       8
+Prague              1
+
+====================================================================================================
+TABLE: loan
+====================================================================================================
+rows: 682 | columns: 7 | memory: 0.04 MB
+duplicate rows: 0 | primary key loan_id: unique=True nulls=0
+
+-- schema --
+    column          dtype  missing  unique                          example
+   loan_id          Int64        0     682                             5314
+account_id          Int64        0     682                             1787
+      date datetime64[us]        0     559 Timestamp('1993-07-05 00:00:00')
+    amount          Int64        0     645                            96396
+  duration          Int64        0       5                               12
+  payments        Float64        0     577                           8033.0
+    status       category        0       4                              'B'
+
+-- first 5 --
+   loan_id  account_id       date  amount  duration  payments status
+0     5314        1787 1993-07-05   96396        12    8033.0      B
+1     5316        1801 1993-07-11  165960        36    4610.0      A
+2     6863        9188 1993-07-28  127080        60    2118.0      A
+3     5325        1843 1993-08-03  105804        36    2939.0      A
+4     7240       11013 1993-09-06  274740        60    4579.0      A
+
+-- last 5 --
+     loan_id  account_id       date  amount  duration  payments status
+677     4989         105 1998-12-05  352704        48    7348.0      C
+678     5221        1284 1998-12-05   52512        12    4376.0      C
+679     6402        6922 1998-12-06  139488        24    5812.0      C
+680     5346        1928 1998-12-06   55632        24    2318.0      C
+681     6748        8645 1998-12-08  240900        60    4015.0      C
+
+-- random 5 (seed 42) --
+     loan_id  account_id       date  amount  duration  payments status
+292     7136       10436 1996-09-28   54396        36    1511.0      C
+145     6694        8316 1995-03-19  134784        24    5616.0      A
+211     6589        7815 1996-01-01  189696        24    7904.0      A
+118     5044         344 1994-12-21  100980        60    1683.0      C
+302     6585        7795 1996-10-29  372120        60    6202.0      C
+
+-- numeric statistics (identifiers excluded) --
+             min       max        mean    median         std
+amount    4980.0  590820.0  151410.176  116928.0  113372.406
+duration    12.0      60.0      36.493      36.0      17.075
+payments   304.0    9910.0    4190.664    3934.0    2215.830
+
+-- date range date: 1993-07-05 00:00:00 .. 1998-12-08 00:00:00
+
+-- frequency: status (4 values incl. missing/blank) --
+status
+C    403
+A    203
+D     45
+B     31
+
+====================================================================================================
+TABLE: order
+====================================================================================================
+rows: 6,471 | columns: 6 | memory: 0.29 MB
+duplicate rows: 0 | primary key order_id: unique=True nulls=0
+
+-- schema --
+    column    dtype  missing  unique    example
+  order_id    Int64        0    6471      29401
+account_id    Int64        0    3758          1
+   bank_to category        0      13       'YZ'
+account_to      str        0    6446 '87144583'
+    amount  Float64        0    4412     2452.0
+  k_symbol category        0       5     'SIPO'
+
+-- first 5 --
+   order_id  account_id bank_to account_to  amount k_symbol
+0     29401           1      YZ   87144583  2452.0     SIPO
+1     29402           2      ST   89597016  3372.7     UVER
+2     29403           2      QR   13943797  7266.0     SIPO
+3     29404           3      WX   83084338  1135.0     SIPO
+4     29405           3      CD   24485939   327.0         
+
+-- last 5 --
+      order_id  account_id bank_to account_to  amount  k_symbol
+6466     46334       11362      YZ   70641225  4780.0      SIPO
+6467     46335       11362      MN   78507822    56.0          
+6468     46336       11362      ST   40799850   330.0  POJISTNE
+6469     46337       11362      KL   20009470   129.0          
+6470     46338       11362      MN   61540514  5392.0      UVER
+
+-- random 5 (seed 42) --
+      order_id  account_id bank_to account_to   amount k_symbol
+2095     31720        1573      IJ   19240260   3638.0     SIPO
+4404     34268        3284      MN   95121895   4872.0     SIPO
+6204     43471        9494      IJ   95319723   4746.0     SIPO
+351      29791         258      KL   37360865   3737.0     SIPO
+5654     37666        5572      KL   53127735  11314.0     SIPO
+
+-- numeric statistics (identifiers excluded) --
+        min      max      mean  median       std
+amount  1.0  14882.0  3280.636  2596.0  2714.475
+
+-- frequency: bank_to (13 values incl. missing/blank) --
+bank_to
+QR    531
+YZ    521
+AB    519
+WX    515
+ST    511
+KL    500
+UV    499
+IJ    496
+GH    487
+OP    485
+EF    483
+MN    466
+CD    458
+
+-- frequency: k_symbol (5 values incl. missing/blank) --
+k_symbol
+SIPO           3502
+<" " blank>    1379
+UVER            717
+POJISTNE        532
+LEASING         341
+
+====================================================================================================
+TABLE: trans
+====================================================================================================
+rows: 1,056,320 | columns: 10 | memory: 61.46 MB
+duplicate rows: 0 | primary key trans_id: unique=True nulls=0
+
+-- schema --
+    column          dtype  missing  unique                          example
+  trans_id          Int64        0 1056320                           695247
+account_id          Int64        0    4500                             2378
+      date datetime64[us]        0    2191 Timestamp('1993-01-01 00:00:00')
+      type       category        0       3                         'PRIJEM'
+ operation       category        0       6                          'VKLAD'
+    amount        Float64        0   40400                            700.0
+   balance        Float64        0  542739                            700.0
+  k_symbol       category       10       9                               ''
+      bank       category   760931      14                             'YZ'
+   account            str   760931    7665                       '62457513'
+
+-- first 5 --
+   trans_id  account_id       date    type operation  amount  balance k_symbol bank account
+0    695247        2378 1993-01-01  PRIJEM     VKLAD   700.0    700.0           NaN     NaN
+1    171812         576 1993-01-01  PRIJEM     VKLAD   900.0    900.0           NaN     NaN
+2    207264         704 1993-01-01  PRIJEM     VKLAD  1000.0   1000.0           NaN     NaN
+3   1117247        3818 1993-01-01  PRIJEM     VKLAD   600.0    600.0           NaN     NaN
+4    579373        1972 1993-01-02  PRIJEM     VKLAD   400.0    400.0           NaN     NaN
+
+-- last 5 --
+         trans_id  account_id       date    type operation  amount  balance k_symbol bank account
+1056315   3626622        2906 1998-12-31  PRIJEM              62.3  13729.4     UROK  NaN     NaN
+1056316   3627616        2935 1998-12-31  PRIJEM              81.3  19544.9     UROK  NaN     NaN
+1056317   3625403        2869 1998-12-31  PRIJEM              60.2  14638.2     UROK  NaN     NaN
+1056318   3626683        2907 1998-12-31  PRIJEM             107.5  23453.0     UROK  NaN     NaN
+1056319   3626540        2902 1998-12-31  PRIJEM             164.1  41642.9     UROK  NaN     NaN
+
+-- random 5 (seed 42) --
+        trans_id  account_id       date    type       operation   amount  balance k_symbol bank   account
+814961    612452        2087 1998-03-20  PRIJEM           VKLAD  10740.0  79176.0           NaN       NaN
+852863   1033537        3534 1998-05-05  PRIJEM           VKLAD  13126.0  52629.5           NaN       NaN
+180747    342263        1161 1995-06-30   VYDAJ           VYBER     14.6  21336.6   SLUZBY  NaN       NaN
+18424     858539        2926 1993-11-05   VYDAJ  PREVOD NA UCET   1093.0  28940.3            WX  11561584
+319394   1021233        3487 1996-05-12   VYDAJ  PREVOD NA UCET    324.0  48186.7     SIPO   IJ  68540710
+
+-- numeric statistics (identifiers excluded) --
+             min       max       mean   median        std
+amount       0.0   87400.0   5924.146   2100.0   9522.735
+balance -41125.7  209637.0  38518.331  33143.4  22117.868
+
+-- date range date: 1993-01-01 00:00:00 .. 1998-12-31 00:00:00
+
+-- frequency: type (3 values incl. missing/blank) --
+type
+VYDAJ     634571
+PRIJEM    405083
+VYBER      16666
+
+-- frequency: operation (6 values incl. missing/blank) --
+operation
+VYBER             434918
+PREVOD NA UCET    208283
+<"" empty>        183114
+VKLAD             156743
+PREVOD Z UCTU      65226
+VYBER KARTOU        8036
+
+-- frequency: k_symbol (10 values incl. missing/blank) --
+k_symbol
+<"" empty>     481871
+UROK           183114
+SLUZBY         155832
+SIPO           118065
+<" " blank>     53433
+DUCHOD          30338
+POJISTNE        18500
+UVER            13580
+SANKC. UROK      1577
+<missing>          10
+
+-- frequency: bank (15 values incl. missing/blank) --
+bank
+<missing>     760931
+QR             22285
+<"" empty>     21881
+AB             21720
+ST             21711
+YZ             21582
+GH             21499
+EF             21293
+KL             21234
+UV             21167
+OP             21094
+IJ             20525
+WX             20178
+MN             19623
+CD             19597
+
+====================================================================================================
+DATA-QUALITY AND RELATIONAL INTEGRITY REPORT
+====================================================================================================
+
+## 01_duplicates_and_keys
+   table    rows primary_key  duplicate_full_rows  duplicate_pk_values  null_pk_values  pk_unique
+ account    4500  account_id                    0                    0               0       True
+    card     892     card_id                    0                    0               0       True
+  client    5369   client_id                    0                    0               0       True
+    disp    5369     disp_id                    0                    0               0       True
+district      77 district_id                    0                    0               0       True
+    loan     682     loan_id                    0                    0               0       True
+   order    6471    order_id                    0                    0               0       True
+   trans 1056320    trans_id                    0                    0               0       True
+
+## 02_null_counts
+   table                 column  null_count  null_pct
+district unemployment_rate_1995           1     1.299
+district            crimes_1995           1     1.299
+   trans               k_symbol          10     0.001
+   trans                   bank      760931    72.036
+   trans                account      760931    72.036
+
+## 03_date_checks
+  table column        min        max  nat  outside_window
+account   date 1993-01-01 1997-12-29    0               0
+   card issued 1993-11-07 1998-12-29    0               0
+   loan   date 1993-07-05 1998-12-08    0               0
+  trans   date 1993-01-01 1998-12-31    0               0
+
+## 04_numeric_sanity
+   table        column                    rule  violations  of_rows      severity
+   trans        amount             amount <= 0          14  1056320        review
+   trans       balance balance < 0 (overdraft)        2999  1056320 informational
+    loan        amount             amount <= 0           0      682        review
+    loan      duration           duration <= 0           0      682        review
+    loan      payments           payments <= 0           0      682        review
+   order        amount             amount <= 0           0     6471        review
+district n_inhabitants      n_inhabitants <= 0           0       77        review
+
+## 05_categorical_domains
+  table    column  distinct_values unexpected absent_vs_baseline
+account frequency                3         []                 []
+   card      type                3         []                 []
+   disp      type                2         []                 []
+   loan    status                4         []                 []
+  order  k_symbol                5         []                 []
+  trans      type                3         []                 []
+  trans operation                6         []                 []
+  trans  k_symbol                9         []                 []
+  trans      bank               14         []                 []
+  order   bank_to               13         []                 []
+
+## 06_foreign_keys
+                               relationship  child_rows  null_fk  orphan_rows  parents_without_children  parent_rows
+account.district_id -> district.district_id        4500        0            0                         0           77
+ client.district_id -> district.district_id        5369        0            0                         0           77
+         disp.client_id -> client.client_id        5369        0            0                         0         5369
+      disp.account_id -> account.account_id        5369        0            0                         0         4500
+               card.disp_id -> disp.disp_id         892        0            0                      4477         5369
+      loan.account_id -> account.account_id         682        0            0                      3818         4500
+     order.account_id -> account.account_id        6471        0            0                       742         4500
+     trans.account_id -> account.account_id     1056320        0            0                         0         4500
+
+## 07_cardinalities
+                                   relationship  parents  min  median   mean  max  parents_with_zero                                           distribution
+disp per account (clients linked to an account)     4500    1     1.0   1.19    2                  0                                      {1: 3631, 2: 869}
+                         OWNER disp per account     4500    1     1.0   1.00    1                  0                                              {1: 4500}
+                 accounts (via disp) per client     5369    1     1.0   1.00    1                  0                                              {1: 5369}
+                       transactions per account     4500    9   208.0 234.74  675                  0 {105: 25, 115: 22, 130: 24, 144: 25, 158: 23, 189: 25}
+                              loans per account     4500    0     0.0   0.15    1               3818                                      {0: 3818, 1: 682}
+                             orders per account     4500    0     1.0   1.44    5                742       {0: 742, 1: 2103, 2: 949, 3: 416, 4: 228, 5: 62}
+                                 cards per disp     5369    0     0.0   0.17    1               4477                                      {0: 4477, 1: 892}
+
+## 08_cross_table_dates
+                              check  violations    rows
+ trans.date before account creation           0 1056320
+  loan.date before account creation           0     682
+card.issued before account creation           0     892
+
+## 09_type_direction_evidence
+  type  pairs_checked  balance_rose_by_amount_pct  balance_fell_by_amount_pct
+PRIJEM         400583                        41.1                         0.1
+ VYBER          16666                         0.0                        72.6
+ VYDAJ         634571                         0.0                        54.3
+
+## 10_trans_id_order_check
+ consecutive_pairs_by_trans_id  pairs_with_earlier_date  share_non_decreasing_pct
+                       1051820                   100858                     90.41
+
+## 11_official_row_counts
+   table  loaded  official_description  match
+ account    4500                  4500   True
+  client    5369                  5369   True
+    disp    5369                  5369   True
+   order    6471                  6471   True
+   trans 1056320               1056320   True
+    loan     682                   682   True
+    card     892                   892   True
+district      77                    77   True
+
+## 12_documentation_discrepancies
+table    column value_in_data   rows                                                        status
+order  k_symbol           ' '   1379                                   not in official description
+trans      type       'VYBER'  16666                                   not in official description
+trans operation            '' 183114                                   not in official description
+trans  k_symbol            '' 481871                                   not in official description
+trans  k_symbol           ' '  53433                                   not in official description
+trans  k_symbol     <missing>     10                                   not in official description
+ disp      type     DISPONENT    869 description says only 'owner/user' (no literal strings given)
+
+====================================================================================================
+STEP 3: RAW-DATA FIGURES
+====================================================================================================
+saved reports\berka\figures\01_accounts.png
+saved reports\berka\figures\02_clients.png
+saved reports\berka\figures\03_transactions.png
+saved reports\berka\figures\04_loans.png
+saved reports\berka\figures\05_relationships.png
+
+====================================================================================================
+STEP 4: TYPED INTERIM TABLES (privacy-safe, no cleaning applied)
+====================================================================================================
+wrote data\interim\berka\account.parquet (4,500 rows)
+wrote data\interim\berka\card.parquet (892 rows)
+wrote data\interim\berka\client.parquet (5,369 rows)
+wrote data\interim\berka\disp.parquet (5,369 rows)
+wrote data\interim\berka\district.parquet (77 rows)
+wrote data\interim\berka\loan.parquet (682 rows)
+wrote data\interim\berka\order.parquet (6,471 rows)
+wrote data\interim\berka\trans.parquet (1,056,320 rows)
+
+lineage manifest: data\metadata\berka_lineage.json
+snapshot text   : reports\berka\snapshot.txt

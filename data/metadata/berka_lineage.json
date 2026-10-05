@@ -1,0 +1,269 @@
+{
+  "processing_version": "berka-ingest-0.1.0",
+  "files": [
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "account",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/account.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\account.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 155356,
+      "sha256": "58d7f50abd72e9b1a5568346f74bb54cd71224ee1db9f09a27d7cac563f38cc6",
+      "rows": 4500,
+      "columns_raw": 4,
+      "columns_after_ingestion": 4,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: frequency"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "card",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/card.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\card.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 31588,
+      "sha256": "fc669bde6adf6457d87421c0bfb218e9c384a7032c6accd348d207a405e72109",
+      "rows": 892,
+      "columns_raw": 4,
+      "columns_after_ingestion": 4,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: type"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "client",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/client.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\client.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 94820,
+      "sha256": "e435c6b92d246f4f0dfd5e2827469d745c06238714c32b3ffb415eebe794e1a7",
+      "rows": 5369,
+      "columns_raw": 3,
+      "columns_after_ingestion": 2,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "drop birth_number (privacy)"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "disp",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/disp.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\disp.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 129716,
+      "sha256": "ebd801f77b6d322e8ebc08e52f188e7c8fca539325f85f57f8c73434da9d32d8",
+      "rows": 5369,
+      "columns_raw": 4,
+      "columns_after_ingestion": 4,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: type"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "district",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/district.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\district.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 6574,
+      "sha256": "7f03cf3b9b82f0fdcc3abdf6cc716f145db8e9875c68e2d2e2f7151e9ecf4df3",
+      "rows": 77,
+      "columns_raw": 16,
+      "columns_after_ingestion": 16,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "rename A1..A16 to documented names (official description PDF)",
+        "cast to category: region"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "loan",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/loan.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\loan.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 27037,
+      "sha256": "68535f609a254aa7a3f03dd8e27dcb822b532df12a0d6046f0666b8dc0b8ae8e",
+      "rows": 682,
+      "columns_raw": 7,
+      "columns_after_ingestion": 7,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: status"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "order",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/order.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\order.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 273800,
+      "sha256": "035930fa6acd2ca42a935e654b21e1bb260248f49b6dc6e7de6351b7c4d56d02",
+      "rows": 6471,
+      "columns_raw": 6,
+      "columns_after_ingestion": 6,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: bank_to, k_symbol"
+      ]
+    },
+    {
+      "dataset": "Berka / PKDD'99 Financial Dataset",
+      "table": "trans",
+      "source": "GitHub mirror jlacko/berka-dataset (copy of the PKDD'99 Discovery Challenge files)",
+      "source_url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/trans.asc",
+      "original_description_url_reported_by_third_party": "http://sorry.vse.cz/~berka/challenge/pkdd1999/berka.htm",
+      "license": "UNVERIFIED: originator terms not yet checked; do not publish raw files",
+      "local_file": "data\\raw\\berka\\trans.asc",
+      "download_date": "2026-10-05",
+      "download_date_basis": "file modification time",
+      "file_size_bytes": 69406578,
+      "sha256": "75ab2f39df9d79d79c5c900de90ddd28248b689f214598ac9fa2ff0f574a70d2",
+      "rows": 1056320,
+      "columns_raw": 10,
+      "columns_after_ingestion": 10,
+      "processing_version": "berka-ingest-0.1.0",
+      "processing_steps": [
+        "verify SHA-256 against verified value",
+        "tokenise with quotes preserved",
+        "decode with explicit schema (no inference)",
+        "parse dates strictly",
+        "cast to category: type, operation, k_symbol, bank"
+      ]
+    }
+  ],
+  "documentation": {
+    "file": "Financial Data description.pdf",
+    "url": "https://raw.githubusercontent.com/jlacko/berka-dataset/master/Financial%20Data%20description.pdf",
+    "sha256": "67227f33f4fc6f8526ca5216fc6ac55ef86393b4f6b3cb6c69a0969c9ffa2b16"
+  },
+  "privacy_drops": {
+    "client.birth_number": {
+      "rows": 5369,
+      "six_digit_format_rows": 5369,
+      "reason": "contains birth date and sex of a person; not needed for Verity"
+    }
+  },
+  "interim_outputs": [
+    {
+      "table": "account",
+      "file": "data\\interim\\berka\\account.parquet",
+      "rows": 4500,
+      "columns": 4,
+      "sha256": "53d3c598bdcb7d0fbdd419a2606e369e2609cf38c48539ccbfe45c2cd39e174a"
+    },
+    {
+      "table": "card",
+      "file": "data\\interim\\berka\\card.parquet",
+      "rows": 892,
+      "columns": 4,
+      "sha256": "d1efc06c993856733bb634912252918c7072f6aabf16f68cbd0e0bcfbc95d098"
+    },
+    {
+      "table": "client",
+      "file": "data\\interim\\berka\\client.parquet",
+      "rows": 5369,
+      "columns": 2,
+      "sha256": "33717c4984588c1dcf1d1d3a62e20f8be4fc17518165a8bd15a5d573f118f898"
+    },
+    {
+      "table": "disp",
+      "file": "data\\interim\\berka\\disp.parquet",
+      "rows": 5369,
+      "columns": 4,
+      "sha256": "e7dc83a439e116a15b9a71f2aaf9588c78d85d4b840bd21afb2af60bfdc176b0"
+    },
+    {
+      "table": "district",
+      "file": "data\\interim\\berka\\district.parquet",
+      "rows": 77,
+      "columns": 16,
+      "sha256": "a5535493e947af0e15c06270cbc1a4a22b7a79a764a78d3eb0262e79b9073ee9"
+    },
+    {
+      "table": "loan",
+      "file": "data\\interim\\berka\\loan.parquet",
+      "rows": 682,
+      "columns": 7,
+      "sha256": "84382a75fa248f8d368afa2bf3611cc938853edbb6ed4a454f78a25e1c279a3a"
+    },
+    {
+      "table": "order",
+      "file": "data\\interim\\berka\\order.parquet",
+      "rows": 6471,
+      "columns": 6,
+      "sha256": "e8af48e55eb4368b9e468ed031051ba2c5ef5c3a22464a8818265d7412922901"
+    },
+    {
+      "table": "trans",
+      "file": "data\\interim\\berka\\trans.parquet",
+      "rows": 1056320,
+      "columns": 10,
+      "sha256": "8da99e4d24243aa4154f81dfbfe7cd87ff2c38f43fe1e491aa62f401bbde4c56"
+    }
+  ],
+  "stage": "Phase 1A: ingestion only (no cleaning, no features, no labels)"
+}

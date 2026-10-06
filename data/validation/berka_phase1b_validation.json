@@ -1,0 +1,326 @@
+{
+  "processing_version": "berka-phase1b-0.1.0",
+  "seed": 42,
+  "demo_cutoff": "1997-01-01",
+  "checks_total": 43,
+  "checks_passed": 43,
+  "checks_failed": 0,
+  "overall": "PASS",
+  "row_counts": [
+    {
+      "table": "account",
+      "input_rows": 4500,
+      "output_rows": 4500,
+      "rows_removed": 0
+    },
+    {
+      "table": "card",
+      "input_rows": 892,
+      "output_rows": 892,
+      "rows_removed": 0
+    },
+    {
+      "table": "client",
+      "input_rows": 5369,
+      "output_rows": 5369,
+      "rows_removed": 0
+    },
+    {
+      "table": "disp",
+      "input_rows": 5369,
+      "output_rows": 5369,
+      "rows_removed": 0
+    },
+    {
+      "table": "district",
+      "input_rows": 77,
+      "output_rows": 77,
+      "rows_removed": 0
+    },
+    {
+      "table": "loan",
+      "input_rows": 682,
+      "output_rows": 682,
+      "rows_removed": 0
+    },
+    {
+      "table": "order",
+      "input_rows": 6471,
+      "output_rows": 6471,
+      "rows_removed": 0
+    },
+    {
+      "table": "trans",
+      "input_rows": 1056320,
+      "output_rows": 1056320,
+      "rows_removed": 0
+    }
+  ],
+  "checks": [
+    {
+      "check": "no rows removed by cleaning",
+      "status": "PASS",
+      "detail": "{'account': 0, 'card': 0, 'client': 0, 'disp': 0, 'district': 0, 'loan': 0, 'order': 0, 'trans': 0}"
+    },
+    {
+      "check": "foreign keys: zero orphans after cleaning",
+      "status": "PASS",
+      "detail": "{'account.district_id -> district.district_id': 0, 'client.district_id -> district.district_id': 0, 'disp.client_id -> client.client_id': 0, 'disp.account_id -> account.account_id': 0, 'card.disp_id -> disp.disp_id': 0, 'loan.account_id -> account.account_id': 0, 'order.account_id -> account.account_id': 0, 'trans.account_id -> account.account_id': 0}"
+    },
+    {
+      "check": "primary keys unique and non-null after cleaning",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "no impossible dates (all inside the dataset window, no NaT)",
+      "status": "PASS",
+      "detail": "[{'table': 'account', 'column': 'date', 'outside_window': 0, 'nat': 0}, {'table': 'card', 'column': 'issued', 'outside_window': 0, 'nat': 0}, {'table': 'loan', 'column': 'date', 'outside_window': 0, 'nat': 0}, {'table': 'trans', 'column': 'date', 'outside_window': 0, 'nat': 0}]"
+    },
+    {
+      "check": "one row per account, unique account_id",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "one row per client, unique client_id",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "counts >= 0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "ratios between 0 and 1",
+      "status": "PASS",
+      "detail": "['overdraft_ratio', 'share_above_prior_p95']"
+    },
+    {
+      "check": "min <= p25 <= median <= p75 <= p95 <= max",
+      "status": "PASS",
+      "detail": "4500 accounts checked"
+    },
+    {
+      "check": "debit baselines ordered: median <= p75 <= p95",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "no infinite values",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "credit_count + debit_count == transaction_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "negative_balance_count == overdraft_transaction_count; has_overdraft consistent",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "overdraft_amount == -minimum_balance where the minimum is negative",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "typical_transaction_amount == median_transaction_amount",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "first_transaction_date <= last_transaction_date",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "sum of account transaction_count == transactions used",
+      "status": "PASS",
+      "detail": "1,056,320 vs 1,056,320"
+    },
+    {
+      "check": "zero-amount rows excluded from amount features only",
+      "status": "PASS",
+      "detail": "14 excluded of 1,056,320"
+    },
+    {
+      "check": "client: account_count >= owner_account_count, every client linked to >= 1 account",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "client overdraft_account_count <= account_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "amount_deviation_signals: 120 vs typical 60 / p95 120 -> 2.0 and 1.0",
+      "status": "PASS",
+      "detail": "{'amount_to_typical_ratio': 2.0, 'amount_to_p95_ratio': 1.0}"
+    },
+    {
+      "check": "amount_deviation_signals: zero or missing baseline -> NaN",
+      "status": "PASS",
+      "detail": "{'amount_to_typical_ratio': nan, 'amount_to_p95_ratio': nan}"
+    },
+    {
+      "check": "cutoff 1997-01-01: corrupting 606,686 later transactions leaves all features unchanged",
+      "status": "PASS",
+      "detail": "identical"
+    },
+    {
+      "check": "test is sensitive: the same corruption changes features when no cutoff is applied",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "per-transaction ratios use only dates before the cutoff",
+      "status": "PASS",
+      "detail": "449,631 rows"
+    },
+    {
+      "check": "feature computation is deterministic (two runs identical, seed 42 where random)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] one row per account, unique account_id",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] one row per client, unique client_id",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] counts >= 0",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] ratios between 0 and 1",
+      "status": "PASS",
+      "detail": "['overdraft_ratio', 'share_above_prior_p95']"
+    },
+    {
+      "check": "[cutoff 1997-01-01] min <= p25 <= median <= p75 <= p95 <= max",
+      "status": "PASS",
+      "detail": "3602 accounts checked"
+    },
+    {
+      "check": "[cutoff 1997-01-01] debit baselines ordered: median <= p75 <= p95",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] no infinite values",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] credit_count + debit_count == transaction_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] negative_balance_count == overdraft_transaction_count; has_overdraft consistent",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] overdraft_amount == -minimum_balance where the minimum is negative",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] typical_transaction_amount == median_transaction_amount",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] first_transaction_date <= last_transaction_date",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] sum of account transaction_count == transactions used",
+      "status": "PASS",
+      "detail": "449,634 vs 449,634"
+    },
+    {
+      "check": "[cutoff 1997-01-01] zero-amount rows excluded from amount features only",
+      "status": "PASS",
+      "detail": "3 excluded of 449,634"
+    },
+    {
+      "check": "[cutoff 1997-01-01] client: account_count >= owner_account_count, every client linked to >= 1 account",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] client overdraft_account_count <= account_count",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "check": "[cutoff 1997-01-01] all features end before the cutoff",
+      "status": "PASS",
+      "detail": ""
+    }
+  ],
+  "remaining_nan": [
+    {
+      "table": "account_features",
+      "column": "amount_to_typical_ratio_median",
+      "nan_count": 1,
+      "of_rows": 4500
+    },
+    {
+      "table": "account_features",
+      "column": "amount_to_typical_ratio_max",
+      "nan_count": 1,
+      "of_rows": 4500
+    },
+    {
+      "table": "account_features",
+      "column": "amount_to_p95_ratio_max",
+      "nan_count": 1,
+      "of_rows": 4500
+    },
+    {
+      "table": "account_features",
+      "column": "share_above_prior_p95",
+      "nan_count": 1,
+      "of_rows": 4500
+    },
+    {
+      "table": "account_features",
+      "column": "cutoff_date",
+      "nan_count": 4500,
+      "of_rows": 4500
+    },
+    {
+      "table": "account_features",
+      "column": "district_unemployment_rate_1995",
+      "nan_count": 48,
+      "of_rows": 4500
+    },
+    {
+      "table": "client_features",
+      "column": "cutoff_date",
+      "nan_count": 5369,
+      "of_rows": 5369
+    },
+    {
+      "table": "client_features",
+      "column": "client_district_unemployment_rate_1995",
+      "nan_count": 61,
+      "of_rows": 5369
+    }
+  ]
+}

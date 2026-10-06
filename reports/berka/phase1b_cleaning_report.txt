@@ -1,0 +1,138 @@
+
+====================================================================================================
+PHASE 1B / CLEANING AND RELATIONAL INTEGRATION
+====================================================================================================
+input files (Phase 1A interim Parquet):
+   table                                file    rows                                                           sha256  matches_phase1a_lineage
+ account  data\interim\berka\account.parquet    4500 53d3c598bdcb7d0fbdd419a2606e369e2609cf38c48539ccbfe45c2cd39e174a                     True
+    card     data\interim\berka\card.parquet     892 d1efc06c993856733bb634912252918c7072f6aabf16f68cbd0e0bcfbc95d098                     True
+  client   data\interim\berka\client.parquet    5369 33717c4984588c1dcf1d1d3a62e20f8be4fc17518165a8bd15a5d573f118f898                     True
+    disp     data\interim\berka\disp.parquet    5369 e7dc83a439e116a15b9a71f2aaf9588c78d85d4b840bd21afb2af60bfdc176b0                     True
+district data\interim\berka\district.parquet      77 a5535493e947af0e15c06270cbc1a4a22b7a79a764a78d3eb0262e79b9073ee9                     True
+    loan     data\interim\berka\loan.parquet     682 84382a75fa248f8d368afa2bf3611cc938853edbb6ed4a454f78a25e1c279a3a                     True
+   order    data\interim\berka\order.parquet    6471 e8af48e55eb4368b9e468ed031051ba2c5ef5c3a22464a8818265d7412922901                     True
+   trans    data\interim\berka\trans.parquet 1056320 8da99e4d24243aa4154f81dfbfe7cd87ff2c38f43fe1e491aa62f401bbde4c56                     True
+
+====================================================================================================
+ROW COUNTS: input vs output
+====================================================================================================
+   table  input_rows  output_rows  rows_removed
+ account        4500         4500             0
+    card         892          892             0
+  client        5369         5369             0
+    disp        5369         5369             0
+district          77           77             0
+    loan         682          682             0
+   order        6471         6471             0
+   trans     1056320      1056320             0
+rows removed in total: 0
+
+====================================================================================================
+TRANSFORMATION LOG (table, column, transformation, affected rows, reason)
+====================================================================================================
+   table                 column                                                                                                        transformation  affected_rows                                                                                                                                                                     reason
+   trans               k_symbol added k_symbol_token (value/empty/blank/missing) and k_symbol_normalized (non-value -> UNKNOWN); original column kept         535314   three different upstream encodings occur with different operations; the token column preserves the distinction while the normalized column gives one feature-level label
+   trans              operation                                                             added operation_normalized (blank -> NONE); original kept         183114                                                      every blank operation is a PRIJEM row with k_symbol UROK (interest credit), so it means 'no operation', not 'unknown'
+   trans        type, operation                 added direction, operation_category and is_credit/is_debit/is_withdrawal/is_deposit/is_transfer flags        1056320 documented mapping in TYPE_DIRECTION and OPERATION_CATEGORY; type=VYBER is not in the official description and is treated as DEBIT because its balance falls by the amount
+   trans                   bank                                                                                      added bank_missing (NA or empty)         782812                                                                                           a missing counterparty bank is expected for cash and interest rows, not an error
+   trans                account                           added counterparty_account_missing and counterparty_status (present/placeholder '0'/absent)         782812    21,881 rows carry the placeholder '0' with an empty bank code, 760,931 rows are absent; both mean no counterparty, but the upstream encodings differ and are kept apart
+   trans                 amount                                                                              added amount_nonpositive flag; rows kept             14                                 all are exactly 0.0 interest postings (see investigation); excluded from amount statistics and ratios, kept in counts and balance features
+   trans                balance                                                                           added is_overdraft (balance < 0); rows kept           2999                                                                                                                             negative balances are genuine account behavior
+   trans            (row order)                                                                                  sorted by account_id, date, trans_id        1056320                                                                                                trans_id is not chronological; (date, trans_id) gives a deterministic order
+   order               k_symbol                                                                          added k_symbol_token and k_symbol_normalized           1379                                                                                                                     same treatment as trans.k_symbol; original column kept
+district unemployment_rate_1995                                              added unemployment_rate_1995_missing; value left missing (no imputation)              1                                                                                                         source marks it with '?'; inventing a value would be a fabrication
+district            crimes_1995                                                         added crimes_1995_missing; value left missing (no imputation)              1                                                                                                         source marks it with '?'; inventing a value would be a fabrication
+ account                  (all)                                                                                                     no transformation              0                         Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label
+    card                  (all)                                                                                                     no transformation              0                         Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label
+  client                  (all)                                                                                                     no transformation              0                         Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label
+    disp                  (all)                                                                                                     no transformation              0                         Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label
+    loan                  (all)                                                                                                     no transformation              0                         Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label
+
+====================================================================================================
+INVESTIGATION: transactions with amount <= 0
+====================================================================================================
+ trans_id  account_id       date   type    k_symbol  amount  balance  previous_balance  balance_unchanged  same_values_as_another_row
+  3533930         102 1998-08-31 PRIJEM        UROK     0.0    311.1             296.4              False                       False
+  3446508        1330 1998-11-30  VYDAJ SANKC. UROK     0.0    141.2             141.2               True                       False
+  3446795        1475 1998-01-31  VYDAJ SANKC. UROK     0.0    694.3             694.4              False                       False
+  3449658        3859 1997-12-31  VYDAJ SANKC. UROK     0.0    197.0             211.7              False                       False
+  3451351        5125 1998-09-30  VYDAJ SANKC. UROK     0.0    597.1             597.1               True                       False
+  3451376        5129 1994-11-30  VYDAJ SANKC. UROK     0.0   -388.7           -8574.1              False                       False
+  3451866        5369 1997-06-30  VYDAJ SANKC. UROK     0.0    603.9             603.9               True                       False
+  3452231        5483 1995-01-31  VYDAJ SANKC. UROK     0.0    113.1             127.7              False                       False
+  3453255        6083 1998-09-30 PRIJEM        UROK     0.0  -8404.2           -8512.9              False                       False
+  3455961        8957 1994-08-31  VYDAJ SANKC. UROK     0.0  72681.7           72696.3              False                       False
+  3456218        9051 1998-02-28 PRIJEM        UROK     0.0   1367.1            1337.1              False                        True
+  3507085        9051 1998-02-28 PRIJEM        UROK     0.0   1367.1            1305.4              False                        True
+  3456605        9337 1997-01-31  VYDAJ SANKC. UROK     0.0   8502.9            8466.4              False                       False
+  3510214        9337 1997-01-31  VYDAJ SANKC. UROK     0.0   8488.2            8445.2              False                       False
+
+rows: 14 | distinct amounts: [np.float64(0.0)] | k_symbol: {'SANKC. UROK': 10, 'UROK': 4}
+types: {'VYDAJ': 10, 'PRIJEM': 4} | accounts affected: 12
+identical duplicate postings (same account, date, type, k_symbol, amount, balance): 2 rows
+finding: all are exactly 0.0 interest postings (UROK credit or SANKC. UROK penalty). The balance relation to the previous row is inconclusive because same-day order is ambiguous.
+treatment: rows kept; excluded from amount statistics, percentiles and ratios; included in transaction counts, direction counts and balance features.
+
+====================================================================================================
+PRESERVED TOKEN DISTINCTIONS
+====================================================================================================
+trans.k_symbol_token:
+ k_symbol_token
+value      521006
+empty      481871
+blank       53433
+missing        10
+
+trans.k_symbol_normalized (top):
+ k_symbol_normalized
+UNKNOWN        535314
+UROK           183114
+SLUZBY         155832
+SIPO           118065
+DUCHOD          30338
+POJISTNE        18500
+UVER            13580
+SANKC. UROK      1577
+
+trans.operation_normalized:
+ operation_normalized
+VYBER             434918
+PREVOD NA UCET    208283
+NONE              183114
+VKLAD             156743
+PREVOD Z UCTU      65226
+VYBER KARTOU        8036
+
+trans.counterparty_status:
+ counterparty_status
+absent         760931
+present        273508
+placeholder     21881
+
+bank_missing: 782812 | counterparty_account_missing: 782812
+
+====================================================================================================
+TRANSACTION SEMANTICS (documented mapping, counts from the data)
+====================================================================================================
+direction operation_category   rows
+   CREDIT            DEPOSIT 156743
+   CREDIT               NONE 183114
+   CREDIT           TRANSFER  65226
+    DEBIT           TRANSFER 208283
+    DEBIT         WITHDRAWAL 442954
+type -> direction: {'PRIJEM': 'CREDIT', 'VYDAJ': 'DEBIT', 'VYBER': 'DEBIT'}
+
+====================================================================================================
+DISTRICT AND ORDER CHANGES
+====================================================================================================
+{'unemployment_rate_1995_missing': 1, 'crimes_1995_missing': 1}
+order.k_symbol_token: {'value': 5092, 'blank': 1379, 'empty': 0, 'missing': 0}
+
+====================================================================================================
+POST-CLEANING INTEGRITY
+====================================================================================================
+                                                      check status                                                                                                                                                                                                                                                                                                                                                            detail
+                                no rows removed by cleaning   PASS                                                                                                                                                                                                                                                               {'account': 0, 'card': 0, 'client': 0, 'disp': 0, 'district': 0, 'loan': 0, 'order': 0, 'trans': 0}
+                  foreign keys: zero orphans after cleaning   PASS {'account.district_id -> district.district_id': 0, 'client.district_id -> district.district_id': 0, 'disp.client_id -> client.client_id': 0, 'disp.account_id -> account.account_id': 0, 'card.disp_id -> disp.disp_id': 0, 'loan.account_id -> account.account_id': 0, 'order.account_id -> account.account_id': 0, 'trans.account_id -> account.account_id': 0}
+            primary keys unique and non-null after cleaning   PASS                                                                                                                                                                                                                                                                                                                                                                  
+no impossible dates (all inside the dataset window, no NaT)   PASS                                                                            [{'table': 'account', 'column': 'date', 'outside_window': 0, 'nat': 0}, {'table': 'card', 'column': 'issued', 'outside_window': 0, 'nat': 0}, {'table': 'loan', 'column': 'date', 'outside_window': 0, 'nat': 0}, {'table': 'trans', 'column': 'date', 'outside_window': 0, 'nat': 0}]

@@ -1,0 +1,164 @@
+
+====================================================================================================
+PHASE 1B / FEATURE ENGINEERING
+====================================================================================================
+account_features: (4500, 52) | client_features: (5369, 15) | cutoff: none (full history, offline description only)
+
+account feature columns (52):
+['account_id', 'district_id', 'transaction_count', 'first_transaction_date', 'last_transaction_date', 'active_days', 'history_days', 'transactions_per_active_day', 'amount_observation_count', 'nonpositive_amount_count', 'total_transaction_amount', 'mean_transaction_amount', 'median_transaction_amount', 'std_transaction_amount', 'min_transaction_amount', 'max_transaction_amount', 'p25_transaction_amount', 'p75_transaction_amount', 'p95_transaction_amount', 'typical_transaction_amount', 'credit_amount_total', 'debit_amount_total', 'median_debit_amount', 'p75_debit_amount', 'p95_debit_amount', 'credit_count', 'debit_count', 'withdrawal_count', 'deposit_count', 'transfer_count', 'mean_balance', 'median_balance', 'minimum_balance', 'maximum_balance', 'balance_std', 'negative_balance_count', 'overdraft_transaction_count', 'has_overdraft', 'overdraft_amount', 'overdraft_ratio', 'ratio_eligible_count', 'amount_to_typical_ratio_median', 'amount_to_typical_ratio_max', 'amount_to_p95_ratio_max', 'share_above_prior_p95', 'cutoff_date', 'district_region', 'district_n_inhabitants', 'district_average_salary', 'district_unemployment_rate_1995', 'district_unemployment_rate_1996', 'district_entrepreneurs_per_1000']
+
+client feature columns (15):
+['client_id', 'district_id', 'account_count', 'owner_account_count', 'total_transaction_count', 'total_transaction_amount', 'average_account_balance', 'overdraft_account_count', 'cutoff_date', 'client_district_region', 'client_district_n_inhabitants', 'client_district_average_salary', 'client_district_unemployment_rate_1995', 'client_district_unemployment_rate_1996', 'client_district_entrepreneurs_per_1000']
+
+account feature summary:
+                                  count            mean             std          min           50%           max
+transaction_count                4500.0      234.737778      126.849443          9.0         208.0         675.0
+active_days                      4500.0      181.059556       96.837286          9.0         161.0         548.0
+history_days                     4500.0     1239.332222      552.189399        331.0        1094.0        2191.0
+transactions_per_active_day      4500.0        1.290348        0.117235          1.0      1.263519           2.0
+amount_observation_count         4500.0      234.734667      126.847469          9.0         208.0         675.0
+nonpositive_amount_count         4500.0        0.003111        0.063176          0.0           0.0           2.0
+total_transaction_amount         4500.0  1390620.791178  1328642.280368      29400.0      891855.7     7619102.4
+mean_transaction_amount          4500.0     5757.795387     4030.631865   843.435519   4729.716559  21062.613287
+median_transaction_amount        4500.0     3144.133144     2464.171688         46.3        2391.0       16400.0
+std_transaction_amount           4500.0     6897.398431     4789.318251   981.689227   5930.447504  22971.834434
+min_transaction_amount           4500.0       16.207733       28.438862          0.1          14.6         700.0
+max_transaction_amount           4500.0    29619.047556     20030.44799       2901.0       26500.0       87400.0
+p25_transaction_amount           4500.0      195.968511      244.345331          8.0       142.525        2784.0
+p75_transaction_amount           4500.0     9350.852711     7294.907861        600.0        6821.0       47803.0
+p95_transaction_amount           4500.0    18116.726622     13706.31168       2900.0       14441.0       58510.0
+typical_transaction_amount       4500.0     3144.133144     2464.171688         46.3        2391.0       16400.0
+credit_amount_total              4500.0   717216.094333   670245.695907      19700.0     466683.35     3857257.4
+debit_amount_total               4500.0   673404.696844    658588.97999       1400.0     425676.75     3761845.0
+median_debit_amount              4500.0     3199.916844     2471.782923         14.6        2409.0       17031.0
+p75_debit_amount                 4500.0     6832.249083     5300.300124       668.75        4953.0       35650.0
+p95_debit_amount                 4500.0      14309.9344    11907.454855       866.15       10867.5       61940.0
+credit_count                     4500.0       90.018444        44.67844          6.0          81.0         272.0
+debit_count                      4500.0      144.719333       87.818427          1.0         127.0         515.0
+withdrawal_count                 4500.0       98.434222       56.361725          1.0          87.0         338.0
+deposit_count                    4500.0       34.831778       32.427585          1.0          30.0         184.0
+transfer_count                   4500.0       60.779778       56.829246          0.0          48.0         344.0
+mean_balance                     4500.0    36667.863523    15165.626204  5711.300641  34696.543359  81192.758824
+median_balance                   4500.0    35527.918144    14646.173172       1808.1       33546.3       87904.2
+minimum_balance                  4500.0      431.130289     2359.776113     -41125.7         600.0       24483.3
+maximum_balance                  4500.0    73181.948578    39590.552069      16377.7       65453.9      209637.0
+balance_std                      4500.0    12979.934464     7929.294659   1946.80073  11175.541084   37690.41121
+negative_balance_count           4500.0        0.666444         4.73673          0.0           0.0         124.0
+overdraft_transaction_count      4500.0        0.666444         4.73673          0.0           0.0         124.0
+overdraft_amount                 4500.0        295.7356     1909.928283          0.0           0.0       41125.7
+overdraft_ratio                  4500.0        0.002885        0.019018          0.0           0.0        0.3769
+ratio_eligible_count             4500.0      224.645778      126.845415          0.0         198.0         665.0
+amount_to_typical_ratio_median   4499.0        0.891222        0.223246     0.017852      0.931852      4.022403
+amount_to_typical_ratio_max      4499.0       17.113271       28.981825     1.030303      9.158377    388.429752
+amount_to_p95_ratio_max          4499.0        1.881558        1.111714     0.173913      1.500026     19.185345
+share_above_prior_p95            4499.0        0.037495        0.023403          0.0      0.036145      0.195652
+district_n_inhabitants           4500.0   269243.197333   358316.523303      42821.0      121947.0     1204953.0
+district_average_salary          4500.0        9515.204     1326.411186       8110.0        8991.0       12541.0
+district_unemployment_rate_1995  4452.0        2.874342        1.846499         0.29          2.77          7.34
+district_unemployment_rate_1996  4500.0         3.49672        2.126928         0.43          3.47           9.4
+district_entrepreneurs_per_1000  4500.0      121.115556       23.157078         81.0         116.0         167.0
+
+client feature summary:
+                                         count           mean             std          min           50%           max
+account_count                           5369.0            1.0             0.0          1.0           1.0           1.0
+owner_account_count                     5369.0       0.838145        0.368352          0.0           1.0           1.0
+total_transaction_count                 5369.0     235.169492      127.676758          9.0         209.0         675.0
+total_transaction_amount                5369.0  1381196.39689  1335580.445221      29400.0      875619.3     7619102.4
+average_account_balance                 5369.0   36474.944298    15243.513448  5711.300641  34579.465035  81192.758824
+overdraft_account_count                 5369.0       0.053641        0.225329          0.0           0.0           1.0
+client_district_n_inhabitants           5369.0   269280.57683   359049.957998      42821.0      121947.0     1204953.0
+client_district_average_salary          5369.0    9510.758614     1330.686689       8110.0        8980.0       12541.0
+client_district_unemployment_rate_1995  5308.0       2.865398        1.847752         0.29          2.71          7.34
+client_district_unemployment_rate_1996  5369.0       3.490942        2.134924         0.43          3.47           9.4
+client_district_entrepreneurs_per_1000  5369.0     121.191097       23.106521         81.0         116.0         167.0
+
+per-transaction ratios: 1,056,306 positive-amount rows, 1,010,906 with a defined baseline (>= 10 prior positive transactions on earlier days)
+
+====================================================================================================
+VALIDATION
+====================================================================================================
+                                                                                                check status                                                       detail
+                                                               one row per account, unique account_id   PASS                                                             
+                                                                 one row per client, unique client_id   PASS                                                             
+                                                                                          counts >= 0   PASS                                                             
+                                                                               ratios between 0 and 1   PASS                 ['overdraft_ratio', 'share_above_prior_p95']
+                                                            min <= p25 <= median <= p75 <= p95 <= max   PASS                                        4500 accounts checked
+                                                        debit baselines ordered: median <= p75 <= p95   PASS                                                             
+                                                                                   no infinite values   PASS                                                             
+                                                      credit_count + debit_count == transaction_count   PASS                                                             
+                      negative_balance_count == overdraft_transaction_count; has_overdraft consistent   PASS                                                             
+                                   overdraft_amount == -minimum_balance where the minimum is negative   PASS                                                             
+                                              typical_transaction_amount == median_transaction_amount   PASS                                                             
+                                                      first_transaction_date <= last_transaction_date   PASS                                                             
+                                                sum of account transaction_count == transactions used   PASS                                       1,056,320 vs 1,056,320
+                                                  zero-amount rows excluded from amount features only   PASS                                     14 excluded of 1,056,320
+                    client: account_count >= owner_account_count, every client linked to >= 1 account   PASS                                                             
+                                                      client overdraft_account_count <= account_count   PASS                                                             
+                                 amount_deviation_signals: 120 vs typical 60 / p95 120 -> 2.0 and 1.0   PASS {'amount_to_typical_ratio': 2.0, 'amount_to_p95_ratio': 1.0}
+                                            amount_deviation_signals: zero or missing baseline -> NaN   PASS {'amount_to_typical_ratio': nan, 'amount_to_p95_ratio': nan}
+               cutoff 1997-01-01: corrupting 606,686 later transactions leaves all features unchanged   PASS                                                    identical
+                    test is sensitive: the same corruption changes features when no cutoff is applied   PASS                                                             
+                                              per-transaction ratios use only dates before the cutoff   PASS                                                 449,631 rows
+                      feature computation is deterministic (two runs identical, seed 42 where random)   PASS                                                             
+                                           [cutoff 1997-01-01] one row per account, unique account_id   PASS                                                             
+                                             [cutoff 1997-01-01] one row per client, unique client_id   PASS                                                             
+                                                                      [cutoff 1997-01-01] counts >= 0   PASS                                                             
+                                                           [cutoff 1997-01-01] ratios between 0 and 1   PASS                 ['overdraft_ratio', 'share_above_prior_p95']
+                                        [cutoff 1997-01-01] min <= p25 <= median <= p75 <= p95 <= max   PASS                                        3602 accounts checked
+                                    [cutoff 1997-01-01] debit baselines ordered: median <= p75 <= p95   PASS                                                             
+                                                               [cutoff 1997-01-01] no infinite values   PASS                                                             
+                                  [cutoff 1997-01-01] credit_count + debit_count == transaction_count   PASS                                                             
+  [cutoff 1997-01-01] negative_balance_count == overdraft_transaction_count; has_overdraft consistent   PASS                                                             
+               [cutoff 1997-01-01] overdraft_amount == -minimum_balance where the minimum is negative   PASS                                                             
+                          [cutoff 1997-01-01] typical_transaction_amount == median_transaction_amount   PASS                                                             
+                                  [cutoff 1997-01-01] first_transaction_date <= last_transaction_date   PASS                                                             
+                            [cutoff 1997-01-01] sum of account transaction_count == transactions used   PASS                                           449,634 vs 449,634
+                              [cutoff 1997-01-01] zero-amount rows excluded from amount features only   PASS                                        3 excluded of 449,634
+[cutoff 1997-01-01] client: account_count >= owner_account_count, every client linked to >= 1 account   PASS                                                             
+                                  [cutoff 1997-01-01] client overdraft_account_count <= account_count   PASS                                                             
+                                               [cutoff 1997-01-01] all features end before the cutoff   PASS                                                             
+
+====================================================================================================
+REMAINING NaN VALUES (full-history features)
+====================================================================================================
+           table                                 column  nan_count  of_rows
+account_features         amount_to_typical_ratio_median          1     4500
+account_features            amount_to_typical_ratio_max          1     4500
+account_features                amount_to_p95_ratio_max          1     4500
+account_features                  share_above_prior_p95          1     4500
+account_features                            cutoff_date       4500     4500
+account_features        district_unemployment_rate_1995         48     4500
+ client_features                            cutoff_date       5369     5369
+ client_features client_district_unemployment_rate_1995         61     5369
+
+====================================================================================================
+FIGURES 06-13
+====================================================================================================
+saved reports\berka\figures\06_transaction_amount_distribution.png
+saved reports\berka\figures\07_transaction_amount_log_distribution.png
+saved reports\berka\figures\08_balance_distribution.png
+saved reports\berka\figures\09_transactions_per_account.png
+saved reports\berka\figures\10_overdraft_behavior.png
+saved reports\berka\figures\11_amount_to_typical_ratio.png
+saved reports\berka\figures\12_account_behavior_features.png
+saved reports\berka\figures\13_feature_correlations.png
+
+====================================================================================================
+OUTPUT FILES
+====================================================================================================
+                                         file    rows  columns                                                           sha256
+   data\processed\berka\account_clean.parquet    4500        4 53d3c598bdcb7d0fbdd419a2606e369e2609cf38c48539ccbfe45c2cd39e174a
+      data\processed\berka\card_clean.parquet     892        4 d1efc06c993856733bb634912252918c7072f6aabf16f68cbd0e0bcfbc95d098
+    data\processed\berka\client_clean.parquet    5369        2 33717c4984588c1dcf1d1d3a62e20f8be4fc17518165a8bd15a5d573f118f898
+      data\processed\berka\disp_clean.parquet    5369        4 e7dc83a439e116a15b9a71f2aaf9588c78d85d4b840bd21afb2af60bfdc176b0
+  data\processed\berka\district_clean.parquet      77       18 5e35f1a24687b856418af7b95823205dd1cfd17d6b58ce4da0f6e77d4051cce2
+      data\processed\berka\loan_clean.parquet     682        7 84382a75fa248f8d368afa2bf3611cc938853edbb6ed4a454f78a25e1c279a3a
+     data\processed\berka\order_clean.parquet    6471        8 d95b5c3d1d90aa170dd8de2bca901e65294db33651c481c8ff925f6de0e22208
+     data\processed\berka\trans_clean.parquet 1056320       25 d058ade4874f61a7e604e427bf944d57db3b491f839c6952225e1118b59593f5
+data\processed\berka\account_features.parquet    4500       52 57c983cb13f4a1dc036b79a7ed1511050187d1c7a38881bc9b3935c1cadbf151
+ data\processed\berka\client_features.parquet    5369       15 1118fe4c34a29c3a3b0a42729c1b5768781b23e1b9d0ed6e3b8df3df17ac3428
+
+validation: PASS (43/43)
+feature dictionary: data\metadata\berka_phase1b_feature_dictionary.json
+validation report : data\validation\berka_phase1b_validation.json
+lineage           : data\metadata\berka_phase1b_lineage.json

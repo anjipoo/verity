@@ -1,0 +1,343 @@
+{
+  "stage": "Phase 1B: cleaning, relational integration, feature engineering (no labels, no model)",
+  "processing_version": "berka-phase1b-0.1.0",
+  "run_utc": "2026-10-06T10:22:29+00:00",
+  "python": "3.12.6",
+  "pandas": "3.0.6",
+  "seed": 42,
+  "phase1a_lineage_file": "data\\metadata\\berka_lineage.json",
+  "input_files": [
+    {
+      "table": "account",
+      "file": "data\\interim\\berka\\account.parquet",
+      "rows": 4500,
+      "sha256": "53d3c598bdcb7d0fbdd419a2606e369e2609cf38c48539ccbfe45c2cd39e174a",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "card",
+      "file": "data\\interim\\berka\\card.parquet",
+      "rows": 892,
+      "sha256": "d1efc06c993856733bb634912252918c7072f6aabf16f68cbd0e0bcfbc95d098",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "client",
+      "file": "data\\interim\\berka\\client.parquet",
+      "rows": 5369,
+      "sha256": "33717c4984588c1dcf1d1d3a62e20f8be4fc17518165a8bd15a5d573f118f898",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "disp",
+      "file": "data\\interim\\berka\\disp.parquet",
+      "rows": 5369,
+      "sha256": "e7dc83a439e116a15b9a71f2aaf9588c78d85d4b840bd21afb2af60bfdc176b0",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "district",
+      "file": "data\\interim\\berka\\district.parquet",
+      "rows": 77,
+      "sha256": "a5535493e947af0e15c06270cbc1a4a22b7a79a764a78d3eb0262e79b9073ee9",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "loan",
+      "file": "data\\interim\\berka\\loan.parquet",
+      "rows": 682,
+      "sha256": "84382a75fa248f8d368afa2bf3611cc938853edbb6ed4a454f78a25e1c279a3a",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "order",
+      "file": "data\\interim\\berka\\order.parquet",
+      "rows": 6471,
+      "sha256": "e8af48e55eb4368b9e468ed031051ba2c5ef5c3a22464a8818265d7412922901",
+      "matches_phase1a_lineage": true
+    },
+    {
+      "table": "trans",
+      "file": "data\\interim\\berka\\trans.parquet",
+      "rows": 1056320,
+      "sha256": "8da99e4d24243aa4154f81dfbfe7cd87ff2c38f43fe1e491aa62f401bbde4c56",
+      "matches_phase1a_lineage": true
+    }
+  ],
+  "processing_steps": [
+    "verify interim Parquet hashes against Phase 1A lineage",
+    "clean tables (flags and normalized columns, no rows removed)",
+    "add transaction semantics from the documented mapping",
+    "compute account features (cutoff-safe) and client features",
+    "validate, plot, write Parquet"
+  ],
+  "cleaning_transformations": [
+    {
+      "table": "trans",
+      "column": "k_symbol",
+      "transformation": "added k_symbol_token (value/empty/blank/missing) and k_symbol_normalized (non-value -> UNKNOWN); original column kept",
+      "affected_rows": 535314,
+      "reason": "three different upstream encodings occur with different operations; the token column preserves the distinction while the normalized column gives one feature-level label"
+    },
+    {
+      "table": "trans",
+      "column": "operation",
+      "transformation": "added operation_normalized (blank -> NONE); original kept",
+      "affected_rows": 183114,
+      "reason": "every blank operation is a PRIJEM row with k_symbol UROK (interest credit), so it means 'no operation', not 'unknown'"
+    },
+    {
+      "table": "trans",
+      "column": "type, operation",
+      "transformation": "added direction, operation_category and is_credit/is_debit/is_withdrawal/is_deposit/is_transfer flags",
+      "affected_rows": 1056320,
+      "reason": "documented mapping in TYPE_DIRECTION and OPERATION_CATEGORY; type=VYBER is not in the official description and is treated as DEBIT because its balance falls by the amount"
+    },
+    {
+      "table": "trans",
+      "column": "bank",
+      "transformation": "added bank_missing (NA or empty)",
+      "affected_rows": 782812,
+      "reason": "a missing counterparty bank is expected for cash and interest rows, not an error"
+    },
+    {
+      "table": "trans",
+      "column": "account",
+      "transformation": "added counterparty_account_missing and counterparty_status (present/placeholder '0'/absent)",
+      "affected_rows": 782812,
+      "reason": "21,881 rows carry the placeholder '0' with an empty bank code, 760,931 rows are absent; both mean no counterparty, but the upstream encodings differ and are kept apart"
+    },
+    {
+      "table": "trans",
+      "column": "amount",
+      "transformation": "added amount_nonpositive flag; rows kept",
+      "affected_rows": 14,
+      "reason": "all are exactly 0.0 interest postings (see investigation); excluded from amount statistics and ratios, kept in counts and balance features"
+    },
+    {
+      "table": "trans",
+      "column": "balance",
+      "transformation": "added is_overdraft (balance < 0); rows kept",
+      "affected_rows": 2999,
+      "reason": "negative balances are genuine account behavior"
+    },
+    {
+      "table": "trans",
+      "column": "(row order)",
+      "transformation": "sorted by account_id, date, trans_id",
+      "affected_rows": 1056320,
+      "reason": "trans_id is not chronological; (date, trans_id) gives a deterministic order"
+    },
+    {
+      "table": "order",
+      "column": "k_symbol",
+      "transformation": "added k_symbol_token and k_symbol_normalized",
+      "affected_rows": 1379,
+      "reason": "same treatment as trans.k_symbol; original column kept"
+    },
+    {
+      "table": "district",
+      "column": "unemployment_rate_1995",
+      "transformation": "added unemployment_rate_1995_missing; value left missing (no imputation)",
+      "affected_rows": 1,
+      "reason": "source marks it with '?'; inventing a value would be a fabrication"
+    },
+    {
+      "table": "district",
+      "column": "crimes_1995",
+      "transformation": "added crimes_1995_missing; value left missing (no imputation)",
+      "affected_rows": 1,
+      "reason": "source marks it with '?'; inventing a value would be a fabrication"
+    },
+    {
+      "table": "account",
+      "column": "(all)",
+      "transformation": "no transformation",
+      "affected_rows": 0,
+      "reason": "Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label"
+    },
+    {
+      "table": "card",
+      "column": "(all)",
+      "transformation": "no transformation",
+      "affected_rows": 0,
+      "reason": "Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label"
+    },
+    {
+      "table": "client",
+      "column": "(all)",
+      "transformation": "no transformation",
+      "affected_rows": 0,
+      "reason": "Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label"
+    },
+    {
+      "table": "disp",
+      "column": "(all)",
+      "transformation": "no transformation",
+      "affected_rows": 0,
+      "reason": "Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label"
+    },
+    {
+      "table": "loan",
+      "column": "(all)",
+      "transformation": "no transformation",
+      "affected_rows": 0,
+      "reason": "Phase 1A found no duplicates, orphans, impossible values or missing data here; loan.status is kept descriptive only and is not turned into a label"
+    }
+  ],
+  "rows_removed": {
+    "account": 0,
+    "card": 0,
+    "client": 0,
+    "disp": 0,
+    "district": 0,
+    "loan": 0,
+    "order": 0,
+    "trans": 0
+  },
+  "output_files": [
+    {
+      "file": "data\\processed\\berka\\account_clean.parquet",
+      "rows": 4500,
+      "columns": 4,
+      "sha256": "53d3c598bdcb7d0fbdd419a2606e369e2609cf38c48539ccbfe45c2cd39e174a"
+    },
+    {
+      "file": "data\\processed\\berka\\card_clean.parquet",
+      "rows": 892,
+      "columns": 4,
+      "sha256": "d1efc06c993856733bb634912252918c7072f6aabf16f68cbd0e0bcfbc95d098"
+    },
+    {
+      "file": "data\\processed\\berka\\client_clean.parquet",
+      "rows": 5369,
+      "columns": 2,
+      "sha256": "33717c4984588c1dcf1d1d3a62e20f8be4fc17518165a8bd15a5d573f118f898"
+    },
+    {
+      "file": "data\\processed\\berka\\disp_clean.parquet",
+      "rows": 5369,
+      "columns": 4,
+      "sha256": "e7dc83a439e116a15b9a71f2aaf9588c78d85d4b840bd21afb2af60bfdc176b0"
+    },
+    {
+      "file": "data\\processed\\berka\\district_clean.parquet",
+      "rows": 77,
+      "columns": 18,
+      "sha256": "5e35f1a24687b856418af7b95823205dd1cfd17d6b58ce4da0f6e77d4051cce2"
+    },
+    {
+      "file": "data\\processed\\berka\\loan_clean.parquet",
+      "rows": 682,
+      "columns": 7,
+      "sha256": "84382a75fa248f8d368afa2bf3611cc938853edbb6ed4a454f78a25e1c279a3a"
+    },
+    {
+      "file": "data\\processed\\berka\\order_clean.parquet",
+      "rows": 6471,
+      "columns": 8,
+      "sha256": "d95b5c3d1d90aa170dd8de2bca901e65294db33651c481c8ff925f6de0e22208"
+    },
+    {
+      "file": "data\\processed\\berka\\trans_clean.parquet",
+      "rows": 1056320,
+      "columns": 25,
+      "sha256": "d058ade4874f61a7e604e427bf944d57db3b491f839c6952225e1118b59593f5"
+    },
+    {
+      "file": "data\\processed\\berka\\account_features.parquet",
+      "rows": 4500,
+      "columns": 52,
+      "sha256": "57c983cb13f4a1dc036b79a7ed1511050187d1c7a38881bc9b3935c1cadbf151"
+    },
+    {
+      "file": "data\\processed\\berka\\client_features.parquet",
+      "rows": 5369,
+      "columns": 15,
+      "sha256": "1118fe4c34a29c3a3b0a42729c1b5768781b23e1b9d0ed6e3b8df3df17ac3428"
+    }
+  ],
+  "features_created": {
+    "account_features": [
+      "account_id",
+      "district_id",
+      "transaction_count",
+      "first_transaction_date",
+      "last_transaction_date",
+      "active_days",
+      "history_days",
+      "transactions_per_active_day",
+      "amount_observation_count",
+      "nonpositive_amount_count",
+      "total_transaction_amount",
+      "mean_transaction_amount",
+      "median_transaction_amount",
+      "std_transaction_amount",
+      "min_transaction_amount",
+      "max_transaction_amount",
+      "p25_transaction_amount",
+      "p75_transaction_amount",
+      "p95_transaction_amount",
+      "typical_transaction_amount",
+      "credit_amount_total",
+      "debit_amount_total",
+      "median_debit_amount",
+      "p75_debit_amount",
+      "p95_debit_amount",
+      "credit_count",
+      "debit_count",
+      "withdrawal_count",
+      "deposit_count",
+      "transfer_count",
+      "mean_balance",
+      "median_balance",
+      "minimum_balance",
+      "maximum_balance",
+      "balance_std",
+      "negative_balance_count",
+      "overdraft_transaction_count",
+      "has_overdraft",
+      "overdraft_amount",
+      "overdraft_ratio",
+      "ratio_eligible_count",
+      "amount_to_typical_ratio_median",
+      "amount_to_typical_ratio_max",
+      "amount_to_p95_ratio_max",
+      "share_above_prior_p95",
+      "cutoff_date",
+      "district_region",
+      "district_n_inhabitants",
+      "district_average_salary",
+      "district_unemployment_rate_1995",
+      "district_unemployment_rate_1996",
+      "district_entrepreneurs_per_1000"
+    ],
+    "client_features": [
+      "client_id",
+      "district_id",
+      "account_count",
+      "owner_account_count",
+      "total_transaction_count",
+      "total_transaction_amount",
+      "average_account_balance",
+      "overdraft_account_count",
+      "cutoff_date",
+      "client_district_region",
+      "client_district_n_inhabitants",
+      "client_district_average_salary",
+      "client_district_unemployment_rate_1995",
+      "client_district_unemployment_rate_1996",
+      "client_district_entrepreneurs_per_1000"
+    ]
+  },
+  "features_removed": [],
+  "columns_removed_upstream": "client.birth_number was removed in Phase 1A (privacy); nothing else",
+  "labels_created": "none (no fraud, default or risk label)",
+  "validation": {
+    "overall": "PASS",
+    "passed": 43,
+    "failed": 0,
+    "file": "data\\validation\\berka_phase1b_validation.json"
+  },
+  "feature_dictionary": "data\\metadata\\berka_phase1b_feature_dictionary.json"
+}
